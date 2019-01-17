@@ -13,12 +13,12 @@ client_secret = 'f8e30e8c-cb4c-407e-89cd-fa885a2c9f7c'
 redirect_uri = "http://172.31.111.54"
 
 oauth_url = "http://pfm.myoxygen.ir/auth/realms/master/protocol/openid-connect/auth?response_type=code&state=&client_id=f741487d-872f-46f8-82ae-b447165d&client_secret=f8e30e8c-cb4c-407e-89cd-fa885a2c9f7c&scope=&redirect_uri=http://172.31.111.54"
-access_token_url = "http://pfm.myoxygen.ir/auth/realms/master/protocol/openid-connect/token"
-authorization = base64.b64encode((client_id + ':' + client_secret).encode('ascii')).decode('ascii')
-print(authorization)
 
 
 def get_access_token(authorization_code):
+    access_token_url = "http://pfm.myoxygen.ir/auth/realms/master/protocol/openid-connect/token"
+    authorization = base64.b64encode((client_id + ':' + client_secret).encode('ascii')).decode('ascii')
+
     headers = {
         'Authorization': "Basic {}".format(authorization),
     }
@@ -34,8 +34,8 @@ def get_access_token(authorization_code):
         # if response.status_code == 200:
         #     if result.get('access_token'):
         #         result = result.get('access_token')
-            # else:
-            #     result = json.loads('{"error": "not 200"}')
+        # else:
+        #     result = json.loads('{"error": "not 200"}')
         # else:
         #     result = None
         return result
