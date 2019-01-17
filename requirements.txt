@@ -16,3 +16,4 @@ redis==3.0.1
 yarl==1.2.6
 SQLAlchemy==1.2.9
 psycopg2-binary==2.7.5
+mysql-python

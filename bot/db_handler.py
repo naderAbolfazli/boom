@@ -9,12 +9,9 @@ my_logger = Logger.get_logger()
 
 
 def add_admin(user_id):
-    user = get_user(user_id)
-    if user:
-        admin = Admin(user)
-        session.add(admin)
-        session.commit()
-    return user
+    admin = Admin(user_id)
+    session.add(admin)
+    session.commit()
 
 
 def del_admin(peer_id):
@@ -24,7 +21,7 @@ def del_admin(peer_id):
 
 
 def get_admins():
-    admins = session.query(Admin, User).filter(Admin.peer_id == User.id).all()
+    admins = session.query(Admin).all()
     return [admin.peer_id for admin in admins]
 
 
