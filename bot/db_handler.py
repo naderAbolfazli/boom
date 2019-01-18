@@ -66,6 +66,7 @@ def get_user(peer_id) -> User:
 
 
 def generate_boom_information(peer_id):
+    #todo: get info
     user = get_user(peer_id)
     return "boom info"
 
@@ -87,3 +88,9 @@ def get_user_financial_services(peer_id) -> Sequence[FinancialService]:
     results = session.query(FinancialServiceUser).filter(
         FinancialServiceUser.client_national_id == user.national_id).all()
     return [result.financial_service for result in results]
+
+
+def get_services_by_category(peer_id, category):
+    user = get_user(peer_id)
+    # todo check user requirement credit
+    return session.query(FinancialService).filter(FinancialService.category == category).all()

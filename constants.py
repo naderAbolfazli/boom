@@ -27,9 +27,9 @@ oauth_url = "http://pfm.myoxygen.ir/auth/realms/master/protocol/openid-connect/a
 
 
 class BotMessage:
-    financial_service = "دسته بندی: {}\nعنوان: {}\nتوضیحات: {}\nتاریخ: {}"
-    sent_credit = "کد ملی گیرنده: {}\nمبلغ: {}\nتاریخ: {}"
-    received_credit = "کد ملی فرستنده: {}\nمبلغ: {}\nتاریخ: {}"
+    financial_service = "دسته بندی: {}\nعنوان: *{}*\nتوضیحات: {}\nشماره تلفن: *{}*\nتاریخ: {}"
+    sent_credit = "کد ملی گیرنده: *{}*\nمبلغ: *{}*\nتاریخ: {}"
+    received_credit = "کد ملی فرستنده: *{}*\nمبلغ: *{}*\nتاریخ: {}"
     authorization_and_access = "احراز هویت و تخصیص دسترسی ها را از طریق لینک زیر انجام دهید:\n" \
                                "[احراز هویت]({})".format(oauth_url)
     ask_national_id = "لطفا ابتدا *کد ملی* خود را وارد نمایید:"
@@ -47,6 +47,9 @@ class BotMessage:
 
 
 class ButtonMessage:
+    investment_fund = "صندوق سرمایه گذاری"
+    home_appliances = "لوازم خانگی"
+    housing = "مسکن"
     register_my_service_manually = "ثبت دستی تسهیلات جدید"
     sent_boom = "بوم های ارسالی"
     received_boom = "بوم های دریافتی"
@@ -78,6 +81,7 @@ class SendingAttempt:
 
 
 class Step:
+    show_hot_services = "show_hot_services"
     show_my_services = "show_my_services"
     show_my_booms = "show_my_booms"
     boom_information = "boom_information"

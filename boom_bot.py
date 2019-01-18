@@ -214,8 +214,8 @@ def show_my_booms(bot, update):
         send_message(message, _get_user(update), Step.show_my_booms)
     loop.call_later(1, send_message, TemplateMessage(TextMessage(
         "انتقالات بوم را در بالا مشاهده میکنید." if credits.__len__() else "انتقالات بوم برای شما *یافت نشد.*"), [
-                                                         TemplateMessageButton(ButtonMessage.return_to_main_menu)
-                                                     ]),
+        TemplateMessageButton(ButtonMessage.return_to_main_menu)
+    ]),
                     _get_user(update), _get_message(update))
     dispatcher.finish_conversation(update)
 
@@ -225,7 +225,7 @@ def show_my_services(bot, update):
     financial_services = get_user_financial_services(_get_user(update).peer_id)
     for service in financial_services:
         message = TextMessage(BotMessage.financial_service.format(service.category, service.title, service.description,
-                                                                  service.date_time))
+                                                                  service.phone_number, service.date_time))
         send_message(message, _get_user(update), Step.show_my_services)
     loop.call_later(1, send_message, TemplateMessage(TextMessage(
         "تسهیلات خود را در بالا مشاهده میکند." if financial_services.__len__() else "تسهیلات فعالی برای شما *یافت نشد.*"),
@@ -238,6 +238,36 @@ def show_my_services(bot, update):
     dispatcher.finish_conversation(update)
 
 
+@dispatcher.message_handler(TemplateResponseFilter(exact=ButtonMessage.hot_services))
+def choose_hot_services_category(bot, update):
+    message = TemplateMessage(TextMessage(BotMessage.choose_from_menu), [
+        TemplateMessageButton(ButtonMessage.housing),
+        TemplateMessageButton(ButtonMessage.home_appliances),
+        TemplateMessageButton(ButtonMessage.investment_fund),
+    ])
+    send_message(message, _get_user(update), Step.show_hot_services, _get_message(update))
+    dispatcher.register_conversation_next_step_handler(update, general_handlers + [
+        MessageHandler(TemplateResponseFilter(
+            keywords=[ButtonMessage.housing, ButtonMessage.home_appliances, ButtonMessage.investment_fund]),
+            show_hot_services),
+        MessageHandler(DefaultFilter(), choose_hot_services_category)
+    ])
+
+
+def show_hot_services(bot, update):
+    category = _get_message(update).text
+    hot_services = get_services_by_category(_get_user(update).peer_id, category)
+    for service in hot_services:
+        message = TextMessage(
+            BotMessage.financial_service.format(service.category, service.title, service.description,
+                                                service.phone_number, service.date_time))
+        send_message(message, _get_user(update), Step.show_my_booms)
+    loop.call_later(1, send_message, TemplateMessage(TextMessage(
+        "تسهیلات را در بالا مشاهده میکنید." if hot_services.__len__() else "تسهیلاتی متناسب با جستجو *یافت نشد.*"), [
+        TemplateMessageButton(ButtonMessage.return_to_main_menu)
+    ]), _get_user(update), Step.show_hot_services, _get_message(update))
+
+
 ################# show myid ##################
 @dispatcher.command_handler(Command.myid)
 def show_myid(bot, update):
@@ -248,8 +278,12 @@ def show_myid(bot, update):
 general_handlers = [
     MessageHandler(TextFilter(exact=ButtonMessage.return_to_main_menu), showing_menu),
     MessageHandler(TemplateResponseFilter(exact=ButtonMessage.return_to_main_menu), showing_menu),
-    MessageHandler(TemplateResponseFilter(keywords=[ButtonMessage.guide]), show_guide),
-    CommandHandler(Command.help, show_guide),
+    MessageHandler(TemplateResponseFilter(exact=ButtonMessage.about_boom), show_guide),
+    MessageHandler(TemplateResponseFilter(exact=ButtonMessage.my_boom), my_boom_menu),
+    MessageHandler(TemplateResponseFilter(exact=ButtonMessage.booming), booming),
+    MessageHandler(TemplateResponseFilter(exact=ButtonMessage.boom_information), boom_information),
+    MessageHandler(TemplateResponseFilter(exact=ButtonMessage.hot_services), choose_hot_services_category),
+    MessageHandler(TemplateResponseFilter(exact=ButtonMessage.my_services), show_my_services),
     CommandHandler(Command.start, showing_menu),
     CommandHandler(Command.add_admin, ask_admin_id_add),
     CommandHandler(Command.del_admin, choose_admin_id_del),

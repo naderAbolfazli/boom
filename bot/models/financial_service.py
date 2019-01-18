@@ -12,16 +12,18 @@ class FinancialService(Base):
     category = Column(String(40))
     title = Column(String(40))
     description = Column(Text)
+    phone_number = Column(String(11))
     photo = Column(PickleType)
     required_credit = Column(Integer)
     required_balance = Column(Float)
     date_time = Column(DateTime)
 
-    def __init__(self, owner_user_id, category, title, description, required_credit, required_balance, photo=None):
+    def __init__(self, owner_user_id, category, title, description, phone_number, required_credit, required_balance, photo=None):
         self.owner_user_id = owner_user_id
         self.category = category
         self.title = title
         self.description = description
+        self.phone_number = phone_number
         self.photo = photo
         self.required_credit = required_credit
         self.required_balance = required_balance
