@@ -121,7 +121,7 @@ def showing_menu(bot, update, state=State.default):
                 TemplateMessageButton(ButtonMessage.hot_services),
                 TemplateMessageButton(ButtonMessage.about_boom),
             ])
-        send_message(message, update.get_effective_user(), Step.showing_menu, user_input=user_input)
+        send_message(message, _get_user(update), Step.showing_menu, user_input=user_input)
         dispatcher.finish_conversation(update)
     elif user.authorization_code:
         update_user_access_token(user.peer_id, user.authorization_code)
@@ -169,6 +169,56 @@ def show_guide(bot, update):
     dispatcher.finish_conversation(update)
 
 
+@dispatcher.message_handler(TemplateResponseFilter(exact=ButtonMessage.my_boom))
+def my_boom_menu(bot, update):
+    message = TemplateMessage(TextMessage(BotMessage.choose_from_menu), [
+        TemplateMessageButton(ButtonMessage.boom_information),
+        TemplateMessageButton(ButtonMessage.booming),
+        TemplateMessageButton(ButtonMessage.received_boom),
+        TemplateMessageButton(ButtonMessage.sent_boom),
+        TemplateMessageButton(ButtonMessage.return_to_main_menu)
+    ])
+    send_message(message, _get_user(update), Step.my_boom_menu, _get_message(update))
+    dispatcher.finish_conversation(update)
+
+
+@dispatcher.message_handler(TemplateResponseFilter(exact=ButtonMessage.boom_information))
+def boom_information(bot, update):
+    message = TemplateMessage(TextMessage(generate_boom_information(_get_user(update).peer_id)), [
+        TemplateMessageButton(ButtonMessage.return_to_main_menu)
+    ])
+    send_message(message, _get_user(update), Step.boom_information, _get_message(update))
+    dispatcher.finish_conversation(update)
+
+
+@dispatcher.message_handler(TemplateResponseFilter(exact=ButtonMessage.booming))
+def booming(bot, update):
+    pass
+    # message =
+
+
+@dispatcher.message_handler(TemplateResponseFilter(exact=ButtonMessage.received_boom))
+@dispatcher.message_handler(TemplateResponseFilter(exact=ButtonMessage.sent_boom))
+def show_my_booms(bot, update):
+    user_ipnut = _get_message(update).text
+    if user_ipnut == ButtonMessage.sent_boom:
+        credits = get_sent_credits(_get_user(update).peer_id)
+        msg = BotMessage.sent_credit
+    else:
+        credits = get_received_credits(_get_user(update).peer_id)
+        msg = BotMessage.received_credit
+    for credit in credits:
+        message = TextMessage(
+            msg.format(credit.to_user if user_ipnut == ButtonMessage.sent_boom else credit.from_user, credit.balance,
+                       credit.date_time))
+        send_message(message, _get_user(update), Step.show_my_booms)
+    loop.call_later(1, send_message, TemplateMessage(TextMessage("انتقالات بوم را در بالا مشاهده میکنید"), [
+        TemplateMessageButton(ButtonMessage.return_to_main_menu)
+    ]),
+                    _get_user(update), _get_message(update))
+    dispatcher.finish_conversation(update)
+
+
 ################# show myid ##################
 @dispatcher.command_handler(Command.myid)
 def show_myid(bot, update):
@@ -186,6 +236,5 @@ general_handlers = [
     CommandHandler(Command.del_admin, choose_admin_id_del),
     CommandHandler(Command.myid, show_myid)
 ]
-
 
 updater.run()

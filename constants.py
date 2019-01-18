@@ -27,6 +27,8 @@ oauth_url = "http://pfm.myoxygen.ir/auth/realms/master/protocol/openid-connect/a
 
 
 class BotMessage:
+    sent_credit = "کد ملی گیرنده: {}\nمبلغ: {}\nتاریخ: {}"
+    received_credit = "کد ملی فرستنده: {}\nمبلغ: {}\nتاریخ: {}"
     authorization_and_access = "احراز هویت و تخصیص دسترسی ها را از طریق لینک زیر انجام دهید:\n" \
                                "[احراز هویت]({})".format(oauth_url)
     ask_national_id = "لطفا ابتدا *کد ملی* خود را وارد نمایید:"
@@ -44,6 +46,10 @@ class BotMessage:
 
 
 class ButtonMessage:
+    sent_boom = "بوم های ارسالی"
+    received_boom = "بوم های دریافتی"
+    booming = "بومینگ"
+    boom_information = "اطلاعات بوم"
     access_granted = "احراز هویت و تخصیص دسترسی انجام شد"
     already_inserted = "قبلا وارد کرده ام"
     about_boom = "درباره بوم"
@@ -70,6 +76,9 @@ class SendingAttempt:
 
 
 class Step:
+    show_my_booms = "show_my_booms"
+    boom_information = "boom_information"
+    my_boom_menu = "my_boom_menu"
     ask_national_id = "ask_national_id"
     show_guide = "show_guide"
     showing_menu = "showing_menu"

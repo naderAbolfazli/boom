@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, PickleType, Float, ForeignKey
+import datetime
+
+from sqlalchemy import Column, Integer, String, PickleType, Float, ForeignKey, DateTime
 from sqlalchemy.orm import backref, relationship
 
 from bot.models.base import Base
@@ -15,6 +17,7 @@ class FinancialService(Base):
     photo = Column(PickleType)
     required_credit = Column(Integer)
     required_balance = Column(Float)
+    date_time = Column(DateTime)
 
     def __init__(self, owner_user_id, category, title, description, photo, required_credit, required_balance):
         self.owner_user_id = owner_user_id
@@ -24,3 +27,4 @@ class FinancialService(Base):
         self.photo = photo
         self.required_credit = required_credit
         self.required_balance = required_balance
+        self.date_time = datetime.datetime.now()

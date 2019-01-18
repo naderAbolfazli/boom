@@ -4,6 +4,7 @@ from balebot.utils.logger import Logger
 from bot.api_handler import get_access_token
 from bot.models.admin import Admin
 from bot.models.base import Session
+from bot.models.credit import Credit
 from bot.models.user import User
 from constants import LogMessage, UserData
 
@@ -58,3 +59,22 @@ def update_user_access_token(peer_id, authorization_code):
 def get_user(peer_id) -> User:
     user = session.query(User).filter(User.peer_id == peer_id).one_or_none()
     return user
+
+
+def generate_boom_information(peer_id):
+    user = get_user(peer_id)
+    return "boom info"
+
+
+def get_sent_credits(peer_id):
+    user = get_user(peer_id)
+    credits = session.query(Credit).filter(Credit.from_user == user.national_id).all()
+    return credits
+
+
+def get_received_credits(peer_id):
+    user = get_user(peer_id)
+    credits = session.query(Credit).filter(Credit.to_user == user.national_id).all()
+    return credits
+
+
