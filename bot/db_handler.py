@@ -66,7 +66,7 @@ def get_user(peer_id) -> User:
 
 
 def generate_boom_information(peer_id):
-    #todo: get info
+    # todo: get info
     user = get_user(peer_id)
     return "boom info"
 
@@ -94,3 +94,10 @@ def get_services_by_category(peer_id, category):
     user = get_user(peer_id)
     # todo check user requirement credit
     return session.query(FinancialService).filter(FinancialService.category == category).all()
+
+
+def add_credit(peer_id, receiver_national_id, credit_balance):
+    user = get_user(peer_id)
+    credit = Credit(user.national_id, receiver_national_id, credit_balance)
+    session.add(credit)
+    session.commit()

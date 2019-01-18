@@ -27,6 +27,8 @@ oauth_url = "http://pfm.myoxygen.ir/auth/realms/master/protocol/openid-connect/a
 
 
 class BotMessage:
+    ask_credit_balance = "مبلغ اعتبار"
+    ask_receiver_national_id = "کد ملی گیرنده:"
     financial_service = "دسته بندی: {}\nعنوان: *{}*\nتوضیحات: {}\nشماره تلفن: *{}*\nتاریخ: {}"
     sent_credit = "کد ملی گیرنده: *{}*\nمبلغ: *{}*\nتاریخ: {}"
     received_credit = "کد ملی فرستنده: *{}*\nمبلغ: *{}*\nتاریخ: {}"
@@ -47,6 +49,10 @@ class BotMessage:
 
 
 class ButtonMessage:
+    back = "بازگشت"
+    register_booming = "🔴ثبت بومینگ🔴"
+    credit_balance = "مبلغ اعتبار"
+    receiver_national_id = "کد ملی گیرنده"
     investment_fund = "صندوق سرمایه گذاری"
     home_appliances = "لوازم خانگی"
     housing = "مسکن"
@@ -81,6 +87,9 @@ class SendingAttempt:
 
 
 class Step:
+    register_booming = "register_booming"
+    ask_boomin_info = "ask_booming_info"
+    booming = "booming"
     show_hot_services = "show_hot_services"
     show_my_services = "show_my_services"
     show_my_booms = "show_my_booms"
@@ -102,6 +111,8 @@ class LogMessage:
 
 
 class UserData:
+    credit_balance = "credit_balance"
+    receiver_national_id = "receiver_national_id"
     peer_id = "peer_id"
     send_message = "send_message"
 

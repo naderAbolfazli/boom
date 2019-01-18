@@ -193,8 +193,62 @@ def boom_information(bot, update):
 
 @dispatcher.message_handler(TemplateResponseFilter(exact=ButtonMessage.booming))
 def booming(bot, update):
-    pass
-    # message =
+    message = TemplateMessage(TextMessage("*بومینگ*"), [
+        TemplateMessageButton(ButtonMessage.receiver_national_id
+                              + (' ✅' if _get_data(update, UserData.receiver_national_id) else '')),
+        TemplateMessageButton(ButtonMessage.credit_balance
+                              + (' ✅' if _get_data(update, UserData.credit_balance) else '')),
+        TemplateMessageButton(ButtonMessage.register_booming),
+        TemplateMessageButton(ButtonMessage.return_to_main_menu),
+    ])
+    send_message(message, _get_user(update), Step.booming, _get_message(update))
+    dispatcher.register_conversation_next_step_handler(update, general_handlers + [
+        MessageHandler(
+            TemplateResponseFilter(keywords=[ButtonMessage.receiver_national_id, ButtonMessage.credit_balance]),
+            ask_booming_info),
+        MessageHandler(TemplateResponseFilter(exact=ButtonMessage.register_booming), register_booming),
+        MessageHandler(DefaultFilter(), booming)
+    ])
+
+
+def ask_booming_info(bot, update):
+    user_input = _get_message(update).text
+    message = TemplateMessage(TextMessage(
+        BotMessage.ask_receiver_national_id if
+        user_input == ButtonMessage.receiver_national_id else BotMessage.ask_credit_balance), [
+        TemplateMessageButton(ButtonMessage.back)
+    ])
+    send_message(message, _get_user(update), Step.ask_boomin_info, _get_message(update))
+    dispatcher.register_conversation_next_step_handler(update, general_handlers + [
+        MessageHandler(TextFilter(),
+                       get_receiver_national_id if
+                       user_input == ButtonMessage.receiver_national_id else get_credit_balance),
+        MessageHandler(DefaultFilter(), booming)
+    ])
+
+
+def get_receiver_national_id(bot, update):
+    _set_data(update, UserData.receiver_national_id, unidecode(_get_message(update).text))
+    booming(bot, update)
+
+
+def get_credit_balance(bot, update):
+    _set_data(update, UserData.credit_balance, unidecode(_get_message(update).text))
+    booming(bot, update)
+
+
+def register_booming(bot, update):
+    receiver_national_id = _get_data(update, UserData.receiver_national_id)
+    credit_balance = _get_data(update, UserData.credit_balance)
+    if receiver_national_id and credit_balance:
+        add_credit(_get_user(update).peer_id, receiver_national_id, credit_balance)
+        message = TemplateMessage(TextMessage("بومینگ با *موفقیت ثبت* شد"), [
+            TemplateMessageButton(ButtonMessage.return_to_main_menu)
+        ])
+        send_message(message, _get_user(update), Step.register_booming, _get_message(update))
+        dispatcher.finish_conversation(update)
+    else:
+        booming(bot, update)
 
 
 @dispatcher.message_handler(TemplateResponseFilter(exact=ButtonMessage.received_boom))
