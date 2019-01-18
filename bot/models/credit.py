@@ -10,8 +10,7 @@ class Credit(Base):
     to_user = Column(Integer)
     balance = Column(Float)
 
-    def __init__(self, from_user,to_user,balance):
+    def __init__(self, from_user, to_user, balance):
         self.from_user = from_user
         self.to_user = to_user
         self.balance = balance
-

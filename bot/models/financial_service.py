@@ -16,7 +16,7 @@ class FinancialService(Base):
     required_credit = Column(Integer)
     required_balance = Column(Float)
 
-    def __init__(self, owner_user_id, category, title, description, photo, required_credit,required_balance):
+    def __init__(self, owner_user_id, category, title, description, photo, required_credit, required_balance):
         self.owner_user_id = owner_user_id
         self.category = category
         self.title = title
@@ -24,4 +24,3 @@ class FinancialService(Base):
         self.photo = photo
         self.required_credit = required_credit
         self.required_balance = required_balance
-

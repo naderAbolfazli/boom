@@ -23,23 +23,37 @@ class MimeType:
     xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 
+oauth_url = "http://pfm.myoxygen.ir/auth/realms/master/protocol/openid-connect/auth?response_type=code&state=&client_id=f741487d-872f-46f8-82ae-b447165d&client_secret=f8e30e8c-cb4c-407e-89cd-fa885a2c9f7c&scope=&redirect_uri=http://172.31.111.54"
+
+
 class BotMessage:
+    authorization_and_access = "احراز هویت و تخصیص دسترسی ها را از طریق لینک زیر انجام دهید:\n" \
+                               "[احراز هویت]({})".format(oauth_url)
+    ask_national_id = "لطفا ابتدا *کد ملی* خود را وارد نمایید:"
     add_admin_id = "لطفا آی دی ادمین جدید را وارد کنید:"
     no_admin_right = "*شما دسترسی ادمین روت ندارید!*"
     del_admin = "ادمین مورد نظر حذف شد"
     add_admin = "ادمین جدید با موفقیت اضافه شد."
     choose_admin = "ادمین مورد نظر را انتخاب کنید:"
-    guide_text = "این راهنما است."
+    guide_text = "کاربر گرامی به *Boom* خوش آمدید.\n" \
+                 "به کمک این بازو میتوانید از خدمات *بانکداری و مدیریت مالی* (بوم) استفاده نمائید.\n" \
+                 "پیشاپیش از حسن اعتماد شما سپاسگذاریم"
     enter_your_pass = "رمز عبور خود را وارد کنید"
     choose_from_menu = "یکی از موارد زیر را انتخاب کنید"
     greeting = "سلام به بازوی *بوم* خوش آمدید"
 
 
 class ButtonMessage:
+    access_granted = "احراز هویت و تخصیص دسترسی انجام شد"
+    already_inserted = "قبلا وارد کرده ام"
+    about_boom = "درباره بوم"
+    hot_services = "پیشنهادات داغ"
+    my_services = "تسهیلات من"
+    my_boom = "بوم من"
     start = "شروع"
     report = "گزارش"
     yes = "بله"
-    return_to_main_menu = "بازگشت به منوی اصلی"
+    return_to_main_menu = "بازگشت به منو"
     guide = "راهنما"
 
 
@@ -56,6 +70,7 @@ class SendingAttempt:
 
 
 class Step:
+    ask_national_id = "ask_national_id"
     show_guide = "show_guide"
     showing_menu = "showing_menu"
     conversation_starter = "conversation_starter"
@@ -71,6 +86,7 @@ class LogMessage:
 
 
 class UserData:
+    peer_id = "peer_id"
     send_message = "send_message"
 
     bot_message = "bot_message"

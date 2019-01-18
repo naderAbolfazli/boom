@@ -10,7 +10,8 @@ from bot.api_handler import *
 from bot.base_bot import Bot
 from bot.callbacks import *
 from bot.db_handler import *
-# from bot.models.base import Base, engine
+from bot.models.base import Base, engine
+from bot.utils import validate_national_code
 from constants import *
 
 my_logger = Logger.get_logger()
@@ -21,7 +22,7 @@ updater = main_bot.updater
 dispatcher = main_bot.dispatcher
 loop = main_bot.loop
 
-# Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)
 
 
 ########################
@@ -58,9 +59,9 @@ def ask_admin_id_add(bot, update):
 
 def adding_admin(bot, update):
     admin_id = update.get_effective_message().text
-    user = add_admin(admin_id)
+    add_admin(admin_id)
     bot.respond(update, TextMessage(
-        BotMessage.add_admin.format(user.name, user.user_name)))
+        BotMessage.add_admin))
     dispatcher.finish_conversation(update)
 
 
@@ -107,21 +108,50 @@ def send_message(message, peer, step, user_input=None, succedent_message=None, a
 @dispatcher.default_handler()
 def showing_menu(bot, update, state=State.default):
     add_user(update.users[0])
-    user_input = update.get_effective_message()
-    message = TemplateMessage(TextMessage(
-        BotMessage.greeting if isinstance(user_input, TextMessage)
-                               and user_input.text == Command.start else
-        BotMessage.choose_from_menu if state == State.wrong else BotMessage.choose_from_menu),
-        [
-            TemplateMessageButton(ButtonMessage.start),
-            TemplateMessageButton(ButtonMessage.guide),
+    user = get_user(_get_user(update).peer_id)
+    if user.national_id and user.authorization_code and user.access_token:
+        user_input = update.get_effective_message()
+        message = TemplateMessage(TextMessage(
+            BotMessage.greeting if isinstance(user_input, TextMessage)
+                                   and user_input.text == Command.start else
+            BotMessage.choose_from_menu if state == State.wrong else BotMessage.choose_from_menu),
+            [
+                TemplateMessageButton(ButtonMessage.my_boom),
+                TemplateMessageButton(ButtonMessage.my_services),
+                TemplateMessageButton(ButtonMessage.hot_services),
+                TemplateMessageButton(ButtonMessage.about_boom),
+            ])
+        send_message(message, update.get_effective_user(), Step.showing_menu, user_input=user_input)
+        dispatcher.finish_conversation(update)
+    elif user.authorization_code:
+        update_user_access_token(user.peer_id, user.authorization_code)
+        showing_menu(bot, update)
+    elif user.national_id:
+        message = TemplateMessage(TextMessage(BotMessage.authorization_and_access), [
+            TemplateMessageButton(ButtonMessage.access_granted)
         ])
-    send_message(message, update.get_effective_user(), Step.showing_menu, user_input=user_input)
-    dispatcher.finish_conversation(update)
+        send_message(message, _get_user(update), Step.ask_national_id, _get_message(update))
+        dispatcher.register_conversation_next_step_handler(update, [
+            MessageHandler(DefaultFilter(), showing_menu)
+        ])
+    else:
+        message = TemplateMessage(TextMessage(BotMessage.ask_national_id), [
+            TemplateMessageButton(ButtonMessage.already_inserted)
+        ])
+        send_message(message, _get_user(update), Step.ask_national_id, _get_message(update))
+        dispatcher.register_conversation_next_step_handler(update, [
+            MessageHandler(TextFilter(validator=validate_national_code), get_national_id),
+            MessageHandler(DefaultFilter(), showing_menu)
+        ])
 
 
-@dispatcher.command_handler([Command.help])
-@dispatcher.message_handler(TemplateResponseFilter(keywords=[ButtonMessage.guide]))
+def get_national_id(bot, update):
+    national_id = _get_message(update).text
+    update_user_national_id(_get_user(update).peer_id, national_id)
+    showing_menu(bot, update)
+
+
+@dispatcher.message_handler(TemplateResponseFilter(keywords=[ButtonMessage.about_boom]))
 def show_guide(bot, update):
     general_message = TextMessage(BotMessage.guide_text)
     btn_list = [

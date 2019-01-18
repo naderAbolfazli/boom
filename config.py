@@ -12,7 +12,7 @@ class BotConfig:
 
 
 class DbConfig:
-    db_user = os.getenv('DB_USER', "admin")
+    db_user = os.getenv('DB_USER', "nader")
     db_password = os.getenv('DB_PASSWORD', "nader1993")
     db_host = os.getenv('DB_HOST', "localhost")
     db_name = os.getenv('DB_NAME', "boom")
