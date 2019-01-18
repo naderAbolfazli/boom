@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from unidecode import unidecode
 
 from balebot.utils.logger import Logger
@@ -5,6 +7,8 @@ from bot.api_handler import get_access_token
 from bot.models.admin import Admin
 from bot.models.base import Session
 from bot.models.credit import Credit
+from bot.models.financial_service import FinancialService
+from bot.models.financial_service_user import FinancialServiceUser
 from bot.models.user import User
 from constants import LogMessage, UserData
 
@@ -78,3 +82,8 @@ def get_received_credits(peer_id):
     return credits
 
 
+def get_user_financial_services(peer_id) -> Sequence[FinancialService]:
+    user = get_user(peer_id)
+    results = session.query(FinancialServiceUser).filter(
+        FinancialServiceUser.client_national_id == user.national_id).all()
+    return [result.financial_service for result in results]

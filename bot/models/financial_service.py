@@ -1,7 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, PickleType, Float, ForeignKey, DateTime
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy import Column, Integer, String, PickleType, Float, DateTime, Text
 
 from bot.models.base import Base
 
@@ -9,17 +8,16 @@ from bot.models.base import Base
 class FinancialService(Base):
     __tablename__ = "financial_services"
     id = Column(Integer, primary_key=True)
-    owner_user_id = Column(Integer, ForeignKey("users.id"))
-    user = relationship("User", backref=backref("users"))
-    category = Column(String)
-    title = Column(String)
-    description = Column(String)
+    owner_national_id = Column(String(10))
+    category = Column(String(40))
+    title = Column(String(40))
+    description = Column(Text)
     photo = Column(PickleType)
     required_credit = Column(Integer)
     required_balance = Column(Float)
     date_time = Column(DateTime)
 
-    def __init__(self, owner_user_id, category, title, description, photo, required_credit, required_balance):
+    def __init__(self, owner_user_id, category, title, description, required_credit, required_balance, photo=None):
         self.owner_user_id = owner_user_id
         self.category = category
         self.title = title

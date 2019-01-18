@@ -212,9 +212,28 @@ def show_my_booms(bot, update):
             msg.format(credit.to_user if user_ipnut == ButtonMessage.sent_boom else credit.from_user, credit.balance,
                        credit.date_time))
         send_message(message, _get_user(update), Step.show_my_booms)
-    loop.call_later(1, send_message, TemplateMessage(TextMessage("انتقالات بوم را در بالا مشاهده میکنید"), [
-        TemplateMessageButton(ButtonMessage.return_to_main_menu)
-    ]),
+    loop.call_later(1, send_message, TemplateMessage(TextMessage(
+        "انتقالات بوم را در بالا مشاهده میکنید." if credits.__len__() else "انتقالات بوم برای شما *یافت نشد.*"), [
+                                                         TemplateMessageButton(ButtonMessage.return_to_main_menu)
+                                                     ]),
+                    _get_user(update), _get_message(update))
+    dispatcher.finish_conversation(update)
+
+
+@dispatcher.message_handler(TemplateResponseFilter(exact=ButtonMessage.my_services))
+def show_my_services(bot, update):
+    financial_services = get_user_financial_services(_get_user(update).peer_id)
+    for service in financial_services:
+        message = TextMessage(BotMessage.financial_service.format(service.category, service.title, service.description,
+                                                                  service.date_time))
+        send_message(message, _get_user(update), Step.show_my_services)
+    loop.call_later(1, send_message, TemplateMessage(TextMessage(
+        "تسهیلات خود را در بالا مشاهده میکند." if financial_services.__len__() else "تسهیلات فعالی برای شما *یافت نشد.*"),
+        [
+            TemplateMessageButton(
+                ButtonMessage.register_my_service_manually),
+            TemplateMessageButton(ButtonMessage.return_to_main_menu)
+        ]),
                     _get_user(update), _get_message(update))
     dispatcher.finish_conversation(update)
 
