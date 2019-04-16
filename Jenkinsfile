@@ -8,7 +8,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'python -m py_compile boom_bot'
+                sh 'python -m py_compile boom_bot.py'
             }
         }
     }
