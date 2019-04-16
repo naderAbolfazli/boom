@@ -12,9 +12,9 @@ class BotConfig:
 
 
 class DbConfig:
-    db_user = os.getenv('DB_USER', "nader")
+    db_user = os.getenv('DB_USER', "postgres")
     db_password = os.getenv('DB_PASSWORD', "nader1993")
     db_host = os.getenv('DB_HOST', "localhost")
     db_name = os.getenv('DB_NAME', "boom")
-    db_port = os.getenv('DB_PORT', "3306")
-    database_url = "mysql://{}:{}@{}:{}/{}?use_unicode=1&charset=utf8".format(db_user, db_password, db_host, db_port, db_name) or None
+    db_port = os.getenv('DB_PORT', "5432")
+    database_url = "postgresql://{}:{}@{}:{}/{}".format(db_user, db_password, db_host, db_port, db_name) or None

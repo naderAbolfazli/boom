@@ -109,40 +109,40 @@ def send_message(message, peer, step, user_input=None, succedent_message=None, a
 def showing_menu(bot, update, state=State.default):
     add_user(update.users[0])
     user = get_user(_get_user(update).peer_id)
-    if user.national_id and user.authorization_code and user.access_token:
-        user_input = update.get_effective_message()
-        message = TemplateMessage(TextMessage(
-            BotMessage.greeting if isinstance(user_input, TextMessage)
-                                   and user_input.text == Command.start else
-            BotMessage.choose_from_menu if state == State.wrong else BotMessage.choose_from_menu),
-            [
-                TemplateMessageButton(ButtonMessage.my_boom),
-                TemplateMessageButton(ButtonMessage.my_services),
-                TemplateMessageButton(ButtonMessage.hot_services),
-                TemplateMessageButton(ButtonMessage.about_boom),
-            ])
-        send_message(message, _get_user(update), Step.showing_menu, user_input=user_input)
-        dispatcher.finish_conversation(update)
-    elif user.authorization_code:
-        update_user_access_token(user.peer_id, user.authorization_code)
-        showing_menu(bot, update)
-    elif user.national_id:
-        message = TemplateMessage(TextMessage(BotMessage.authorization_and_access), [
-            TemplateMessageButton(ButtonMessage.access_granted)
+    # if user.national_id and user.authorization_code and user.access_token:
+    user_input = update.get_effective_message()
+    message = TemplateMessage(TextMessage(
+        BotMessage.greeting if isinstance(user_input, TextMessage)
+                               and user_input.text == Command.start else
+        BotMessage.choose_from_menu if state == State.wrong else BotMessage.choose_from_menu),
+        [
+            TemplateMessageButton(ButtonMessage.my_boom),
+            TemplateMessageButton(ButtonMessage.my_services),
+            TemplateMessageButton(ButtonMessage.hot_services),
+            TemplateMessageButton(ButtonMessage.about_boom),
         ])
-        send_message(message, _get_user(update), Step.ask_national_id, _get_message(update))
-        dispatcher.register_conversation_next_step_handler(update, [
-            MessageHandler(DefaultFilter(), showing_menu)
-        ])
-    else:
-        message = TemplateMessage(TextMessage(BotMessage.ask_national_id), [
-            TemplateMessageButton(ButtonMessage.already_inserted)
-        ])
-        send_message(message, _get_user(update), Step.ask_national_id, _get_message(update))
-        dispatcher.register_conversation_next_step_handler(update, [
-            MessageHandler(TextFilter(validator=validate_national_code), get_national_id),
-            MessageHandler(DefaultFilter(), showing_menu)
-        ])
+    send_message(message, _get_user(update), Step.showing_menu, user_input=user_input)
+    dispatcher.finish_conversation(update)
+    # elif user.authorization_code:
+    #     update_user_access_token(user.peer_id, user.authorization_code)
+    #     showing_menu(bot, update)
+    # elif user.national_id:
+    #     message = TemplateMessage(TextMessage(BotMessage.authorization_and_access), [
+    #         TemplateMessageButton(ButtonMessage.access_granted)
+    #     ])
+    #     send_message(message, _get_user(update), Step.ask_national_id, _get_message(update))
+    #     dispatcher.register_conversation_next_step_handler(update, [
+    #         MessageHandler(DefaultFilter(), showing_menu)
+    #     ])
+    # else:
+    #     message = TemplateMessage(TextMessage(BotMessage.ask_national_id), [
+    #         TemplateMessageButton(ButtonMessage.already_inserted)
+    #     ])
+    #     send_message(message, _get_user(update), Step.ask_national_id, _get_message(update))
+    #     dispatcher.register_conversation_next_step_handler(update, [
+    #         MessageHandler(TextFilter(validator=validate_national_code), get_national_id),
+    #         MessageHandler(DefaultFilter(), showing_menu)
+    #     ])
 
 
 def get_national_id(bot, update):
